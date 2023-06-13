@@ -14,30 +14,33 @@ using namespace std;
 // GetCursorPos(&pt)
 enum class CURE_LEVEL
 {
-	CORRECTION = 0,
-	EXERCISE,
-	PHYSIOTHERAPY,
-	MEDICATION,
-	OPERATION,
+	CORRECTION = 0, // 교정
+	EXERCISE,		// 운동 치료
+	PHYSIOTHERAPY,  // 물리 치료
+	MEDICATION,		// 약물 치료
+	OPERATION,		// 수술
 };
-
+enum class KEY {
+	UP,
+	DOWN,
+	SPACEBAR,
+};
 
 void Init();
 void printMoney(__int64 number);
 void render(__int64 money, int age, int level);
 bool SaveData(__int64 money, int age, int level);
 bool LoadData(__int64& money, int& age, int& level);
-
-
+int MenuDraw();
+int KeyController();
 
 void Init() {
-	system("mode con:cols=32 lines=32");
-	SetConsoleTitle(TEXT("강산한테 거북목 치료비 삥뜯기는 게임"));
+	system("mode con:cols=33 lines=32");
+	SetConsoleTitle(TEXT("강산이 강산강산"));
 }
 
 void printMoney(__int64 number) {
 	int cnt = 0;
-
 	stack<string> s1;
 	while (true)
 	{
@@ -61,26 +64,112 @@ void printMoney(__int64 number) {
 }
 
 void render(__int64 money, int age, int level) {
+	system("cls");
+	Go2XY(0, 0);
 	cout << "MONEY : ";
 	printMoney(money);
 	cout << "\n";
 	cout << "AGE   : " << age << "\n";
 	cout << "LEVEL : " << level + 1 << "\n";
-	Go2XY(0, 3);
 	int iCurmode = _setmode(_fileno(stdout), _O_U16TEXT);
-	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
-	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
-	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
-	wcout << L"░░░░░░░░░░░░░░▄▄▄▄▄▄▄▄▄▄▄▄░░░░░░" << endl;
-	wcout << L"░░░░░░░░░░▄█▀▀▀░░░░░░░░░░▀▀█▄░░░" << endl;
-	wcout << L"░░░▄▀▀▀▀▀██░░░░░░░░░░░░░░░░░▀█▄░" << endl;
-	wcout << L"░░█░▀░▀░░░▀██▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▀█░" << endl;
-	wcout << L"░░▀█▄▄▄▄▄▀▀█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█▀░" << endl;
-	wcout << L"░░░░░░░░░░░░░█▄▄█▀░░░░░▀█▄▄▄██░░" << endl;
-	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
-	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
-	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
+	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
+	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
+	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
+	wcout << L"░░░░░░░░░░░░░░▄▄▄▄▄▄▄▄▄▄▄▄░░░░░░░" << endl;
+	wcout << L"░░░░░░░░░░▄█▀▀▀░░░░░░░░░░▀▀█▄░░░░" << endl;
+	wcout << L"░░░▄▀▀▀▀▀██░░░░░░░░░░░░░░░░░▀█▄░░" << endl;
+	wcout << L"░░█░▀░▀░░░▀██▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▀█░░" << endl;
+	wcout << L"░░▀█▄▄▄▄▄▀▀█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█▀░░" << endl;
+	wcout << L"░░░░░░░░░░░░░█▄▄█▀░░░░░▀█▄▄▄██░░░" << endl;
+	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
+	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
+	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
 	int iChangemode = _setmode(_fileno(stdout), iCurmode);
+
+
+}
+
+void DrawTitle() {
+
+	/*
+	.---..-..-..---. .---..-.   .---.
+	`| |'| || || |-< `| |'| |__ | |- 
+	 `-' `----'`-'`-' `-' `----'`---'
+	
+	
+	*/
+	cout << ".---..-..-..---. .---..-.   .---.";
+	cout << "`| |'| || || |-< `| |'| |__ | |- ";
+	cout << " `-' `----'`-'`-' `-' `----'`---'";
+
+}
+
+int MenuDraw()
+{
+	DrawTitle();
+	int x = 5;
+	int y = 8;
+	int posY = y;
+	Go2XY(x, y);
+	cout << "게임 시작";
+	Go2XY(x, y + 1);
+	cout << "게임 종료";
+
+	Go2XY(x - 1, y);
+	// 키 입력에 따라 > 이놈을 이동시킬겁니다
+	while (true)
+	{
+		int iKey = KeyController();
+		switch (iKey)
+		{
+		case  (int)KEY::DOWN:
+		{
+			if (posY > y) continue;
+			posY++;
+			cout << "\b" << " ";
+			Go2XY(x - 1, posY);
+			cout << "\b" << ">";
+		}
+		break;
+		case (int)KEY::UP: {
+			if (posY <= y) continue;
+			posY--;
+			cout << "\b" << " ";
+			Go2XY(x - 1, posY);
+			cout << "\b" << ">";
+		}break;
+		case (int)KEY::SPACEBAR: {
+			return posY - y;
+		}break;
+		}
+		Sleep(100); // 잘래용
+	}
+	return 0;
+}
+
+
+int KeyController()
+{
+	int iInput = _getch();
+	if (iInput == 224)
+	{
+		iInput = _getch();
+
+		switch (iInput)
+		{
+		case 72:
+			return (int)KEY::UP;
+		case 80:
+			return (int)KEY::DOWN;
+		default:
+			break;
+		}
+	}
+	else if (iInput == 32)
+	{
+		return (int)KEY::SPACEBAR;
+	}
+	return -1;
 }
 
 bool SaveData(__int64 money, int age, int level) {
@@ -88,7 +177,7 @@ bool SaveData(__int64 money, int age, int level) {
 
 	if (outputFile.is_open()) {
 		// 숫자 쓰기
-		int number = 123;
+		int number = money;
 		outputFile << number << endl;
 
 		// 문자열 쓰기
@@ -124,10 +213,10 @@ bool LoadData(__int64& money, int& age, int& level) {
 
 		// 파일 닫기
 		inputFile.close();
-		std::cout << "데이터를 파일에서 읽었습니다." << std::endl;
+		cout << "데이터를 파일에서 읽었습니다." << std::endl;
 	}
 	else {
-		std::cout << "파일을 열 수 없습니다." << std::endl;
+		cout << "파일을 열 수 없습니다." << std::endl;
 	}
 
 	return 0;
@@ -143,13 +232,35 @@ int main() {
 	int age = 1;
 	// 치료 단계
 	int level = static_cast<int>(CURE_LEVEL::CORRECTION);
+#pragma region LevelExplain
+
 	// 1. 자세 교정
 	// 2. 운동 치료
 	// 3. 물리 치료
 	// 4. 약물 치료
 	// 5. 수술 (중 사망)
 
+#pragma endregion
 	LoadData(money, age, level);
+	int tqe;
+	while (true)
+	{
+		int iMenu = MenuDraw();
+		if (iMenu == 0) {
+			break;
+		}
+		else if (iMenu == 1) {
+			cout << "게임을 종료합니다." << endl;
+			for (int i = 0; i < 3; i++)
+			{
+				cout << '\r' << 3 - i << "...";
+				Sleep(1000);
+			}
+			return 0;
+		}
+	}
+
+
 	render(money, age, level);
 	//while (true)
 	//{
@@ -157,5 +268,6 @@ int main() {
 	//}
 
 	SaveData(money, age, level);
+	cin >> tqe;
 	cout << "게임이 종료되었습니다.";
 }
