@@ -12,6 +12,7 @@ using namespace std;
 
 // POINT pt = {};
 // GetCursorPos(&pt)
+
 enum class CURE_LEVEL
 {
 	CORRECTION = 0, // 교정
@@ -20,6 +21,7 @@ enum class CURE_LEVEL
 	MEDICATION,		// 약물 치료
 	OPERATION,		// 수술
 };
+
 enum class KEY {
 	UP,
 	DOWN,
@@ -33,10 +35,28 @@ bool SaveData(__int64 money, int age, int level);
 bool LoadData(__int64& money, int& age, int& level);
 int MenuDraw();
 int KeyController();
+int GetCursorXPos();
+int GetCursorYPos();
 
 void Init() {
 	system("mode con:cols=33 lines=32");
 	SetConsoleTitle(TEXT("강산이 강산강산"));
+}
+
+int GetCursorYPos()
+{
+	POINT pt = {};
+	GetCursorPos(&pt);
+
+	return pt.y;
+}
+
+int GetCursorXPos()
+{
+	POINT pt = {};
+	GetCursorPos(&pt);
+
+	return pt.x;
 }
 
 void printMoney(__int64 number) {
@@ -66,11 +86,20 @@ void printMoney(__int64 number) {
 void render(__int64 money, int age, int level) {
 	system("cls");
 	Go2XY(0, 0);
+
+	SetColor((int)COLOR::RED, (int)COLOR::WHITE);
+
+	cout << "                                 \n";
+	cout << "                                 \n";
+	cout << "                                 \n";
+	Go2XY(0, 0);
 	cout << "MONEY : ";
 	printMoney(money);
 	cout << "\n";
 	cout << "AGE   : " << age << "\n";
-	cout << "LEVEL : " << level + 1 << "\n";
+	cout << "LEVEL : " << level + 1 << "\n\n";
+
+	SetColor((int)COLOR::GREEN, (int)COLOR::BLACK);
 	int iCurmode = _setmode(_fileno(stdout), _O_U16TEXT);
 	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
 	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
@@ -85,23 +114,24 @@ void render(__int64 money, int age, int level) {
 	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
 	wcout << L"░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░" << endl;
 	int iChangemode = _setmode(_fileno(stdout), iCurmode);
-
-
+	SetColor((int)COLOR::WHITE, (int)COLOR::BLACK);
 }
 
 void DrawTitle() {
 
 	/*
 	.---..-..-..---. .---..-.   .---.
-	`| |'| || || |-< `| |'| |__ | |- 
+	`| |'| || || |-< `| |'| |__ | |-
 	 `-' `----'`-'`-' `-' `----'`---'
-	
-	
 	*/
+	SetColor((int)COLOR::BLACK, (int)COLOR::WHITE);
 	cout << ".---..-..-..---. .---..-.   .---.";
 	cout << "`| |'| || || |-< `| |'| |__ | |- ";
 	cout << " `-' `----'`-'`-' `-' `----'`---'";
-
+	SetColor((int)COLOR::RED , (int)COLOR::WHITE);
+	cout << "비정상적으로 앱 종료시 파일이 사라질 수 있습니다.";
+	SetColor((int)COLOR::WHITE, (int)COLOR::BLACK);
+	
 }
 
 int MenuDraw()
@@ -173,16 +203,13 @@ int KeyController()
 }
 
 bool SaveData(__int64 money, int age, int level) {
-	std::ofstream outputFile("data.txt");
+	ofstream outputFile("data.txt");
 
 	if (outputFile.is_open()) {
-		// 숫자 쓰기
-		int number = money;
-		outputFile << number << endl;
 
-		// 문자열 쓰기
-		string text = "Hello, World!";
-		outputFile << text << endl;
+		outputFile << money << endl;
+		outputFile << age << endl;
+		outputFile << level << endl;
 
 		// 파일 닫기
 		outputFile.close();
@@ -198,7 +225,7 @@ bool SaveData(__int64 money, int age, int level) {
 bool LoadData(__int64& money, int& age, int& level) {
 
 	// 파일을 읽기 모드로 열기
-	std::ifstream inputFile("data.txt");
+	ifstream inputFile("data.txt");
 
 	if (inputFile.is_open()) {
 		// 숫자 읽기
@@ -213,12 +240,11 @@ bool LoadData(__int64& money, int& age, int& level) {
 
 		// 파일 닫기
 		inputFile.close();
-		cout << "데이터를 파일에서 읽었습니다." << std::endl;
+		cout << "로드되었습니다." << endl;
 	}
 	else {
-		cout << "파일을 열 수 없습니다." << std::endl;
+		cout << "파일을 열 수 없습니다." << endl;
 	}
-
 	return 0;
 }
 
